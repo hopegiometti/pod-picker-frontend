@@ -4,7 +4,7 @@ import { Card } from 'semantic-ui-react'
 
 export default class PodcastCard extends React.Component {
     handleClick = () => {
-      this.props.addToFavs(this.props.podcast)
+      this.props.editFavs(this.props.podcast)
     }
 
     render() {

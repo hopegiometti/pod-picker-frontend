@@ -6,6 +6,7 @@ import Menu from './Menu'
 import DropdownMenu from './DropdownMenu'
 import { BrowserRouter } from 'react-router-dom'
 import UserHome from './UserHome'
+import FilterPodcasts from './FilterPodcasts'
 
 
 class App extends React.Component {
@@ -13,7 +14,9 @@ class App extends React.Component {
     podcastArray: [],
     visible: false,
     usersArray: [],
-    user: {}
+    user: {},
+    favorites: [],
+    filteredFavs: []
   }
 
   componentDidMount() {
@@ -29,62 +32,124 @@ class App extends React.Component {
     .then(r => r.json())
     .then((users) => {
      this.setState({
-       usersArray: users 
+       usersArray: users
      }) 
     })
   }
 
-  addToFavs = (podcast) => {
-    fetch("http://localhost:3000/favorites", {
-      method: "POST",
-      headers: {
-        'content-type': 'application/json',
-        'accepts': 'application/json'
-      },
-      body: JSON.stringify({
-        user_id: this.state.user.id,
-        podcast_id: podcast.id
-      })
-    })
-    .then(r => r.json())
-    .then((resp) => {
-     console.log(resp) 
-    })
+  editFavs = (podcast) => {
+    if (this.state.filteredFavs.length > 0) {
+      let favoritePodcasts = this.state.filteredFavs.map(favorite => favorite.podcast)
+      let favPodcastToEdit = this.state.filteredFavs.filter(favorite => favorite.podcast.id === podcast.id)
+      if (favoritePodcasts.includes(podcast)) {
+        fetch(`http://localhost:3000/favorites/${favPodcastToEdit[0].id}`, {
+          method: "DELETE"
+        })
+        .then(r => r.json())
+        .then((resp) => {
+          console.log(resp.data) 
+            let updatedFavs = this.state.filteredFavs.filter(favorite => favorite.id !== resp.data.id)
+            this.setState({
+              filteredFavs: updatedFavs
+            })
+        })
+      } else {
+        fetch("http://localhost:3000/favorites", {
+          method: "POST",
+          headers: {
+            'content-type': 'application/json',
+            'accepts': 'application/json'
+          },
+          body: JSON.stringify({
+            user_id: this.state.user.id,
+            podcast_id: podcast.id
+          })
+        })
+        .then(r => r.json())
+        .then((newFav) => {
+        console.log(newFav)
+            this.setState({
+              filteredFavs: [...this.state.filteredFavs, newFav]
+            })
+        })
+      }
+    } else {
+      let favoritePodcasts = this.state.favorites.map(favorite => favorite.podcast)
+      let favPodcastToEdit = this.state.favorites.filter(favorite => favorite.podcast.id === podcast.id)
+      if (favoritePodcasts.includes(podcast)) {
+        fetch(`http://localhost:3000/favorites/${favPodcastToEdit[0].id}`, {
+          method: "DELETE"
+        })
+        .then(r => r.json())
+        .then((resp) => {
+          console.log(resp.data) 
+            let updatedFavs = this.state.favorites.filter(favorite => favorite.id !== resp.data.id)
+            this.setState({
+              filteredFavs: updatedFavs
+            })
+        })
+      } else {
+        fetch("http://localhost:3000/favorites", {
+          method: "POST",
+          headers: {
+            'content-type': 'application/json',
+            'accepts': 'application/json'
+          },
+          body: JSON.stringify({
+            user_id: this.state.user.id,
+            podcast_id: podcast.id
+          })
+        })
+        .then(r => r.json())
+        .then((newFav) => {
+        console.log(newFav)
+            this.setState({
+              filteredFavs: [...this.state.favorites, newFav]
+            })
+        })
+      }
+    }
   }
 
   showMenu = () => {
 
   }
 
-  handleChange = (userToSet) => {
+  handleUserChange = (userToSet) => {
     console.log(userToSet)
     this.setState({
-      user: userToSet
+      user: userToSet,
+      favorites: userToSet.favorites
     })
   }
 
-  renderUserHomePage = (renderParams) => {
-    console.log(renderParams)
-    // const slug = renderParams.match.params.slug
-    const user = this.state.user
-    console.log(user)
-    if (user)
-      if (user.username === this.state.user.username)
-        return <UserHome userObject={this.state.user} addToFavs={this.addToFavs}/>
-      else return <h4>Change User</h4>
-    else return null
+  handleGenreChange = (pickedGenre) => {
+    console.log(pickedGenre)
+    // this.setState({
+    //   user: userToSet,
+    //   favorites: userToSet.favorites
+    // })
+  }
+
+  renderUserHomePage = () => {
+        if (this.state.filteredFavs.length > 0 ) {
+          return <UserHome userObject={this.state.user} favorites={this.state.filteredFavs} editFavs={this.editFavs}/>}
+        else {
+        return <UserHome userObject={this.state.user} favorites={this.state.favorites} editFavs={this.editFavs}/>}
   }
 
   render() {
-    console.log(this.state.podcastArray)
     let { userObj } = this.state.user
     return (<BrowserRouter>
       <div>
         <div>
           <Menu showMenu={this.showMenu} />
         </div>
+
         { this.state.user.username ?
+
           <h2>Welcome, {this.state.user.username}
+
             <button className="ui icon large button right floated"> 
               <i className="sign-out icon"></i> 
             </button> 
@@ -102,21 +167,23 @@ class App extends React.Component {
             </Link>
 
           </h2> : <h2>Choose a user</h2> }
+          
         <div>
-          <DropdownMenu usersArray={this.state.usersArray} placeholder="Select User" onChange={this.handleChange} value={userObj} />   
+          <DropdownMenu usersArray={this.state.usersArray} placeholder="Select User" onChange={this.handleUserChange} value={userObj} />   
         </div>
         
-          <Switch>
-            <Route path="/browse" render={ () => {
-             return <div className="ui four column doubling stackable grid container">
-               <h3>Browse All Podcasts:</h3>
-                <PodcastContainer podcastArray={this.state.podcastArray} addToFavs={this.addToFavs} /> 
-              </div> }} />
-            <Route path="/user" render={this.renderUserHomePage} />
-          </Switch>
+        <Switch>
+          <Route path="/browse" render={ () => {
+            return <div className="ui four column doubling stackable grid container">
+              <h3>Browse All Podcasts:</h3>
+              <FilterPodcasts placeholder="Select genre" podcastArray={this.state.podcastArray} onChange={this.handleGenreChange}/>
+              <PodcastContainer podcastArray={this.state.podcastArray} editFavs={this.editFavs} /> 
+            </div> }} />
+          <Route path="/user" render={this.renderUserHomePage} />
+        </Switch> 
         
       </div>
-      </BrowserRouter>
+    </BrowserRouter>
     );
   } 
 }
