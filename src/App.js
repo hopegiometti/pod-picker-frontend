@@ -16,7 +16,8 @@ class App extends React.Component {
     usersArray: [],
     user: {},
     favorites: [],
-    filteredFavs: []
+    filteredFavs: [],
+    filteredPods: []
   }
 
   componentDidMount() {
@@ -124,11 +125,17 @@ class App extends React.Component {
   }
 
   handleGenreChange = (pickedGenre) => {
-    console.log(pickedGenre)
-    // this.setState({
-    //   user: userToSet,
-    //   favorites: userToSet.favorites
-    // })
+    if (pickedGenre === "All") {
+      let newPodArray = this.state.podcastArray
+      this.setState({
+        filteredPods: newPodArray
+      })
+    } else {
+      let newPodArray = this.state.podcastArray.filter(podcast => podcast.genre === pickedGenre)
+      this.setState({
+      filteredPods: newPodArray
+    })}
+    
   }
 
   renderUserHomePage = () => {
@@ -177,7 +184,7 @@ class App extends React.Component {
             return <div className="ui four column doubling stackable grid container">
               <h3>Browse All Podcasts:</h3>
               <FilterPodcasts placeholder="Select genre" podcastArray={this.state.podcastArray} onChange={this.handleGenreChange}/>
-              <PodcastContainer podcastArray={this.state.podcastArray} editFavs={this.editFavs} /> 
+              {this.state.filteredPods.length > 0 ? <PodcastContainer podcastArray={this.state.filteredPods} editFavs={this.editFavs} /> : <PodcastContainer podcastArray={this.state.podcastArray} editFavs={this.editFavs} />}
             </div> }} />
           <Route path="/user" render={this.renderUserHomePage} />
         </Switch> 

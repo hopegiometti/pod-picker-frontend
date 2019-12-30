@@ -9,6 +9,7 @@ export default class FilterPodcasts extends React.Component {
         console.log(podcastGenres)
         return( <Dropdown text={this.props.placeholder} >
             <Dropdown.Menu>
+                <Dropdown.Item text="All" onClick={() => this.props.onChange("All")}/>
                 {uniqueGenres.map((genre) => {
                     return <Dropdown.Item text={genre} onClick={() => this.props.onChange(genre)} />
                 })}
