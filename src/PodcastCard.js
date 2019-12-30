@@ -7,21 +7,21 @@ export default class PodcastCard extends React.Component {
       this.props.editFavs(this.props.podcast)
     }
 
-    seeMorePodInfo = () => {}
+    linkToWebsite = () => {
+      window.open(this.props.podcast.website)
+    }
 
     render() {
       // console.log(this.props.podcast.podcast.title)
-        return (<div onClick={this.seeMorePodInfo} >
+        return (<div >
         <div className="ui link cards">
            <div className="card">
              <div className="ui slide reveal">
-              {/* <div className="visible content" > */}
                 <img src={this.props.podcast.thumbnail} height={300} alt="" className="visible content"/> 
-              {/* </div> */}
               <div className="hidden content" >
               <Segment style={{overflow: 'auto', maxHeight: 200 }}>{this.props.podcast.description}</Segment>
                 <p>Genre: {this.props.podcast.genre} </p>
-                <button className="ui icon button" >
+                <button className="ui icon button" onClick={this.linkToWebsite}>
                   <i className="external url icon" ></i>
                 </button>
               </div>
