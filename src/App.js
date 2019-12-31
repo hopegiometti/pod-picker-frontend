@@ -52,7 +52,7 @@ class App extends React.Component {
             let updatedFavs = this.state.filteredFavs.filter(favorite => favorite.id !== resp.data.id)
             this.setState({
               filteredFavs: updatedFavs
-            })
+            }, () => console.log(this.state.filteredFavs, this.state.favorites))
         })
       } else {
         fetch("http://localhost:3000/favorites", {
@@ -68,7 +68,7 @@ class App extends React.Component {
         })
         .then(r => r.json())
         .then((newFav) => {
-        console.log(newFav)
+        console.log(newFav.podcast.id)
             this.setState({
               filteredFavs: [...this.state.filteredFavs, newFav]
             })
@@ -87,7 +87,7 @@ class App extends React.Component {
             let updatedFavs = this.state.favorites.filter(favorite => favorite.id !== resp.data.id)
             this.setState({
               filteredFavs: updatedFavs
-            })
+             }, () => console.log(this.state.filteredFavs, this.state.favorites))
         })
       } else {
         fetch("http://localhost:3000/favorites", {
@@ -103,7 +103,7 @@ class App extends React.Component {
         })
         .then(r => r.json())
         .then((newFav) => {
-        console.log(newFav)
+        console.log(newFav.podcast.id)
             this.setState({
               filteredFavs: [...this.state.favorites, newFav]
             })
@@ -145,7 +145,16 @@ class App extends React.Component {
         return <UserHome userObject={this.state.user} favorites={this.state.favorites} editFavs={this.editFavs}/>}
   }
 
+  renderBrowsingPage = () => {
+    if (this.state.filteredPods.length > 0) {
+      return <PodcastContainer podcastArray={this.state.filteredPods} editFavs={this.editFavs} user={this.state.user} />
+    } else {
+      return <PodcastContainer podcastArray={this.state.podcastArray} editFavs={this.editFavs} user={this.state.user} />
+    }
+  }
+
   render() {
+    console.log("i am rendering")
     let { userObj } = this.state.user
     return (<BrowserRouter>
       <div>
@@ -180,13 +189,14 @@ class App extends React.Component {
         </div>
         
         <Switch>
-          <Route path="/browse" render={ () => {
+          <Route exact path="/browse" render={ () => {
             return <div className="ui four column doubling stackable grid container">
               <h3>Browse All Podcasts:</h3>
               <FilterPodcasts placeholder="Select genre" podcastArray={this.state.podcastArray} onChange={this.handleGenreChange}/>
-              {this.state.filteredPods.length > 0 ? <PodcastContainer podcastArray={this.state.filteredPods} editFavs={this.editFavs} /> : <PodcastContainer podcastArray={this.state.podcastArray} editFavs={this.editFavs} />}
+              {this.renderBrowsingPage()}
+              {/* {this.state.filteredPods.length > 0 ? <PodcastContainer podcastArray={this.state.filteredPods} editFavs={this.editFavs} user={this.state.user} /> : <PodcastContainer podcastArray={this.state.podcastArray} editFavs={this.editFavs} user={this.state.user} />} */}
             </div> }} />
-          <Route path="/user" render={this.renderUserHomePage} />
+          <Route exact path="/user" render={this.renderUserHomePage} />
         </Switch> 
         
       </div>

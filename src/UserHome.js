@@ -7,7 +7,7 @@ export default class UserHome extends React.Component {
         console.log(podcastArray)
         return( <div>
             <h3>Your Favorite Podcasts:</h3>
-            <PodcastContainer podcastArray={podcastArray} editFavs={this.props.editFavs} />
+            <PodcastContainer podcastArray={podcastArray} editFavs={this.props.editFavs} user={this.props.userObject} />
         </div> )
     }
 }

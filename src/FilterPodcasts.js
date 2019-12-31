@@ -5,8 +5,8 @@ export default class FilterPodcasts extends React.Component {
     render() {
         let podcastGenres = this.props.podcastArray.map(podcast => podcast.genre)
         // list = list.filter((x, i, a) => a.indexOf(x) == i)
-        let uniqueGenres = podcastGenres.filter((x, i, a) => a.indexOf(x) == i)
-        console.log(podcastGenres)
+        let uniqueGenres = podcastGenres.filter((x, i, a) => a.indexOf(x) === i)
+        // console.log(podcastGenres)
         return( <Dropdown text={this.props.placeholder} >
             <Dropdown.Menu>
                 <Dropdown.Item text="All" onClick={() => this.props.onChange("All")}/>
