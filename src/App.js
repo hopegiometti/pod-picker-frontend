@@ -164,25 +164,49 @@ class App extends React.Component {
 
         { this.state.user.username ?
 
-          <h2>Welcome, {this.state.user.username}
-
-            <button className="ui icon large button right floated"> 
+          <div className="ui menu">
+          
+            <div className="header item">
+              Welcome, {this.state.user.username}
+            </div>
+            <Link to="/user">
+              <a className="item">
+                User
+              </a>
+            </Link>
+            <Link to="/browse">
+              <a className="item">
+                Browse
+              </a>
+            </Link>
+            <div className="right menu">
+              <Link to="/browse">
+                <a className="item">
+                  Logout
+                </a>
+              </Link>
+            </div>
+          {/* <Link to="/browse">
+            <button className="ui icon button right floated"> 
               <i className="sign-out icon"></i> 
             </button> 
+          </Link>
 
             <Link to="/browse">
-              <button className="ui icon large button right floated"> 
+              <button className="ui icon button right floated"> 
                 <i className="home icon"></i> 
               </button>
             </Link>
             
             <Link to="/user">
-              <button className="ui icon large button right floated" > 
+              <button className="ui icon button right floated" > 
                 <i className="user icon"></i> 
               </button>
-            </Link>
+            </Link> */}
 
-          </h2> : <h2>Choose a user</h2> }
+
+
+          </div> : <h2>Choose a user</h2> }
           
         <div>
           <DropdownMenu usersArray={this.state.usersArray} placeholder="Select User" onChange={this.handleUserChange} value={userObj} />   

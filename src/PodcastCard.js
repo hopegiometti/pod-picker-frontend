@@ -49,7 +49,7 @@ export default class PodcastCard extends React.Component {
             </div>
             <div className="extra content">
               <span>
-                <button className="ui icon button" onClick={() => this.handleClick()}>
+                <button className="circular ui icon button" onClick={() => this.handleClick()}>
                   {this.likeButtonFill()}
                 </button>
               </span>
