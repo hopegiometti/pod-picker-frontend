@@ -54,6 +54,7 @@ class App extends React.Component {
     if (this.state.filteredFavs.length > 0) {
       let podToEdit = this.state.filteredFavs.filter(fav => fav.podcast.id === podcast.id)
       let justThePods = this.state.filteredFavs.map(fav => fav.podcast)
+      console.log(podToEdit, justThePods, this.state.filteredFavs)
       if (justThePods.includes(podcast)) {
         fetch(`http://localhost:3000/favorites/${podToEdit[0].id}`, {
           method: "DELETE"
@@ -61,8 +62,8 @@ class App extends React.Component {
         .then(r => r.json())
         .then((resp) => {
           console.log(resp)
-          let userFavs = this.state.favorites.filter(fav => fav.user.id === this.state.user.id)
-          let updatedFavs = userFavs.filter(fav => fav.podcast.id !== podcast.id)
+          // let userFavs = this.state.favorites.filter(fav => fav.user.id === this.state.user.id)
+          let updatedFavs = this.state.filteredFavs.filter(fav => fav.podcast.id !== podcast.id)
           this.setState({
             filteredFavs: updatedFavs
           })
@@ -82,9 +83,9 @@ class App extends React.Component {
         .then(r => r.json())
         .then((newFav) => {
           console.log(newFav)
-          let userFavs = this.state.favorites.filter(fav => fav.user.id === this.state.user.id)
+          // let userFavs = this.state.favorites.filter(fav => fav.user.id === this.state.user.id)
           this.setState({
-            filteredFavs: [...userFavs, newFav]
+            filteredFavs: [...this.state.filteredFavs, newFav]
           })
         })
       }
@@ -153,7 +154,11 @@ class App extends React.Component {
 
   renderUserHomePage = () => {
       if (this.state.filteredFavs.length > 0 ) {
-        return <UserHome userObject={this.state.user} favorites={this.state.filteredFavs} editFavs={this.editFavs}/>
+        if (this.state.filteredFavs[0].user.id === this.state.user.id) {
+          return <UserHome userObject={this.state.user} favorites={this.state.filteredFavs} editFavs={this.editFavs}/>
+        } else {
+          return <UserHome userObject={this.state.user} favorites={this.state.favorites.filter(fav => fav.user.id === this.state.user.id)} editFavs={this.editFavs}/>
+        }
       } else {
         return <UserHome userObject={this.state.user} favorites={this.state.favorites.filter(fav => fav.user.id === this.state.user.id)} editFavs={this.editFavs}/>
     }
