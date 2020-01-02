@@ -51,7 +51,7 @@ class App extends React.Component {
   }
 
   editFavs = (podcast) => {
-    if (this.state.filteredFavs.length > 0) {
+    if (this.state.filteredFavs.length > 0 && this.state.filteredFavs[0].user.id === this.state.user.id) {
       let podToEdit = this.state.filteredFavs.filter(fav => fav.podcast.id === podcast.id)
       let justThePods = this.state.filteredFavs.map(fav => fav.podcast)
       console.log(podToEdit, justThePods, this.state.filteredFavs)
