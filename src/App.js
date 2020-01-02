@@ -2,11 +2,11 @@ import React from 'react';
 import './App.css';
 import PodcastContainer from './PodcastContainer'
 import { Route, Switch, Link } from 'react-router-dom'
-import Menu from './Menu'
 import DropdownMenu from './DropdownMenu'
 import { BrowserRouter } from 'react-router-dom'
 import UserHome from './UserHome'
 import FilterPodcasts from './FilterPodcasts'
+
 
 
 class App extends React.Component {
@@ -17,15 +17,17 @@ class App extends React.Component {
     user: {},
     favorites: [],
     filteredFavs: [],
-    filteredPods: []
+    filteredPods: [],
+    searchTerm: ''
   }
 
   componentDidMount() {
     fetch("http://localhost:3000/podcasts")
     .then(r => r.json())
     .then((podcasts) => {
+      let abcPods = podcasts.sort((a, b) => a.title.localeCompare(b.title))
       this.setState({
-        podcastArray: podcasts
+        podcastArray: abcPods
       })
     }) 
     
@@ -36,30 +38,41 @@ class App extends React.Component {
        usersArray: users
      }) 
     })
+
+    fetch("http://localhost:3000/favorites")
+    .then(r => r.json())
+    .then((favs) => {
+     this.setState({
+       favorites: favs
+     }) 
+    })
+    
+    
   }
 
   editFavs = (podcast) => {
     if (this.state.filteredFavs.length > 0) {
-      let favoritePodcasts = this.state.filteredFavs.map(favorite => favorite.podcast)
-      let favPodcastToEdit = this.state.filteredFavs.filter(favorite => favorite.podcast.id === podcast.id)
-      if (favoritePodcasts.includes(podcast)) {
-        fetch(`http://localhost:3000/favorites/${favPodcastToEdit[0].id}`, {
+      let podToEdit = this.state.filteredFavs.filter(fav => fav.podcast.id === podcast.id)
+      let justThePods = this.state.filteredFavs.map(fav => fav.podcast)
+      if (justThePods.includes(podcast)) {
+        fetch(`http://localhost:3000/favorites/${podToEdit[0].id}`, {
           method: "DELETE"
         })
         .then(r => r.json())
         .then((resp) => {
-          console.log(resp.data) 
-            let updatedFavs = this.state.filteredFavs.filter(favorite => favorite.id !== resp.data.id)
-            this.setState({
-              filteredFavs: updatedFavs
-            }, () => console.log(this.state.filteredFavs, this.state.favorites))
+          console.log(resp)
+          let userFavs = this.state.favorites.filter(fav => fav.user.id === this.state.user.id)
+          let updatedFavs = userFavs.filter(fav => fav.podcast.id !== podcast.id)
+          this.setState({
+            filteredFavs: updatedFavs
+          })
         })
       } else {
         fetch("http://localhost:3000/favorites", {
           method: "POST",
           headers: {
-            'content-type': 'application/json',
-            'accepts': 'application/json'
+            "content-type": 'application/json',
+            "accepts": 'application/json'
           },
           body: JSON.stringify({
             user_id: this.state.user.id,
@@ -68,33 +81,36 @@ class App extends React.Component {
         })
         .then(r => r.json())
         .then((newFav) => {
-        console.log(newFav.podcast.id)
-            this.setState({
-              filteredFavs: [...this.state.filteredFavs, newFav]
-            })
+          console.log(newFav)
+          let userFavs = this.state.favorites.filter(fav => fav.user.id === this.state.user.id)
+          this.setState({
+            filteredFavs: [...userFavs, newFav]
+          })
         })
       }
     } else {
-      let favoritePodcasts = this.state.favorites.map(favorite => favorite.podcast)
-      let favPodcastToEdit = this.state.favorites.filter(favorite => favorite.podcast.id === podcast.id)
-      if (favoritePodcasts.includes(podcast)) {
-        fetch(`http://localhost:3000/favorites/${favPodcastToEdit[0].id}`, {
+      let userFavPods = this.state.favorites.filter(fav => fav.user.id === this.state.user.id)
+      let podToEdit = userFavPods.filter(fav => fav.podcast.id === podcast.id)
+      let justThePods = userFavPods.map(fav => fav.podcast)
+      if (justThePods.includes(podcast)) {
+        fetch(`http://localhost:3000/favorites/${podToEdit[0].id}`, {
           method: "DELETE"
         })
         .then(r => r.json())
         .then((resp) => {
-          console.log(resp.data) 
-            let updatedFavs = this.state.favorites.filter(favorite => favorite.id !== resp.data.id)
-            this.setState({
-              filteredFavs: updatedFavs
-             }, () => console.log(this.state.filteredFavs, this.state.favorites))
+          console.log(resp)
+          let userFavs = this.state.favorites.filter(fav => fav.user.id === this.state.user.id)
+          let updatedFavs = userFavs.filter(fav => fav.podcast.id !== podcast.id)
+          this.setState({
+            filteredFavs: updatedFavs
+          })
         })
       } else {
         fetch("http://localhost:3000/favorites", {
           method: "POST",
           headers: {
-            'content-type': 'application/json',
-            'accepts': 'application/json'
+            "content-type": 'application/json',
+            "accepts": 'application/json'
           },
           body: JSON.stringify({
             user_id: this.state.user.id,
@@ -103,17 +119,14 @@ class App extends React.Component {
         })
         .then(r => r.json())
         .then((newFav) => {
-        console.log(newFav.podcast.id)
-            this.setState({
-              filteredFavs: [...this.state.favorites, newFav]
-            })
+          console.log(newFav)
+          let userFavs = this.state.favorites.filter(fav => fav.user.id === this.state.user.id)
+          this.setState({
+            filteredFavs: [...userFavs, newFav]
+          })
         })
       }
     }
-  }
-
-  showMenu = () => {
-
   }
 
   handleUserChange = (userToSet) => {
@@ -139,18 +152,32 @@ class App extends React.Component {
   }
 
   renderUserHomePage = () => {
-        if (this.state.filteredFavs.length > 0 ) {
-          return <UserHome userObject={this.state.user} favorites={this.state.filteredFavs} editFavs={this.editFavs}/>}
-        else {
-        return <UserHome userObject={this.state.user} favorites={this.state.favorites} editFavs={this.editFavs}/>}
+      if (this.state.filteredFavs.length > 0 ) {
+        return <UserHome userObject={this.state.user} favorites={this.state.filteredFavs} editFavs={this.editFavs}/>
+      } else {
+        return <UserHome userObject={this.state.user} favorites={this.state.favorites.filter(fav => fav.user.id === this.state.user.id)} editFavs={this.editFavs}/>
+    }
   }
 
   renderBrowsingPage = () => {
     if (this.state.filteredPods.length > 0) {
-      return <PodcastContainer podcastArray={this.state.filteredPods} editFavs={this.editFavs} user={this.state.user} />
+      if (this.state.filteredFavs.length > 0) {
+        return <PodcastContainer podcastArray={this.state.filteredPods} editFavs={this.editFavs} user={this.state.user} favorites={this.state.filteredFavs} />
+      } else {
+        return <PodcastContainer podcastArray={this.state.filteredPods} editFavs={this.editFavs} user={this.state.user} favorites={this.state.favorites.filter(fav => fav.user.id === this.state.user.id)} />
+      }
     } else {
-      return <PodcastContainer podcastArray={this.state.podcastArray} editFavs={this.editFavs} user={this.state.user} />
+      if (this.state.filteredFavs.length > 0) {
+        return <PodcastContainer podcastArray={this.state.podcastArray} editFavs={this.editFavs} user={this.state.user} favorites={this.state.filteredFavs} />
+      }
+      return <PodcastContainer podcastArray={this.state.podcastArray} editFavs={this.editFavs} user={this.state.user} favorites={this.state.favorites.filter(fav => fav.user.id === this.state.user.id)} />
     }
+  }
+
+  handleLogout = () => {
+    this.setState({
+      user: {}
+    })
   }
 
   render() {
@@ -158,10 +185,6 @@ class App extends React.Component {
     let { userObj } = this.state.user
     return (<BrowserRouter>
       <div>
-        <div>
-          <Menu showMenu={this.showMenu} />
-        </div>
-
         { this.state.user.username ?
 
           <div className="ui menu">
@@ -181,31 +204,11 @@ class App extends React.Component {
             </Link>
             <div className="right menu">
               <Link to="/browse">
-                <a className="item">
+                <a className="item" onClick={this.handleLogout} >
                   Logout
                 </a>
               </Link>
             </div>
-          {/* <Link to="/browse">
-            <button className="ui icon button right floated"> 
-              <i className="sign-out icon"></i> 
-            </button> 
-          </Link>
-
-            <Link to="/browse">
-              <button className="ui icon button right floated"> 
-                <i className="home icon"></i> 
-              </button>
-            </Link>
-            
-            <Link to="/user">
-              <button className="ui icon button right floated" > 
-                <i className="user icon"></i> 
-              </button>
-            </Link> */}
-
-
-
           </div> : <h2>Choose a user</h2> }
           
         <div>
@@ -218,7 +221,6 @@ class App extends React.Component {
               <h3>Browse All Podcasts:</h3>
               <FilterPodcasts placeholder="Select genre" podcastArray={this.state.podcastArray} onChange={this.handleGenreChange}/>
               {this.renderBrowsingPage()}
-              {/* {this.state.filteredPods.length > 0 ? <PodcastContainer podcastArray={this.state.filteredPods} editFavs={this.editFavs} user={this.state.user} /> : <PodcastContainer podcastArray={this.state.podcastArray} editFavs={this.editFavs} user={this.state.user} />} */}
             </div> }} />
           <Route exact path="/user" render={this.renderUserHomePage} />
         </Switch> 

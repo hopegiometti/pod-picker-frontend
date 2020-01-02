@@ -13,12 +13,12 @@ export default class PodcastCard extends React.Component {
 
     likeButtonFill = () => {
        if (this.props.user.username ) {
-        let userFavPods = this.props.user.favorites.map(favorite => favorite.podcast.id)
-        if (userFavPods.includes(this.props.podcast.id)) {
-          // console.log(userFavPods, userFavPods.includes(this.props.podcast.id))
+        
+        let userFavPods = this.props.favorites.map(favorite => favorite.podcast)
+        let userFavPodIds = userFavPods.map(pod => pod.id)
+        if (userFavPodIds.includes(this.props.podcast.id)) {
           return <i className="heart icon"></i>
         } else {
-          // console.log(userFavPods, userFavPods.includes(this.props.podcast.id))
           return <i className="empty heart icon"></i>
         }} else {
           return <i className="empty heart icon"></i>
@@ -26,10 +26,7 @@ export default class PodcastCard extends React.Component {
     }
 
     render() {
-        
-      // let userFavPods = this.props.user.favorites.map(favorite => favorite.podcast)
-      // console.log(this.props.podcast)
-      // console.log("i am rendering")
+      // console.log(this.props)
         return (<div >
         <div className="ui link cards">
            <div className="card">
