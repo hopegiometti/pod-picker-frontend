@@ -6,7 +6,8 @@ import DropdownMenu from './DropdownMenu'
 import { BrowserRouter } from 'react-router-dom'
 import UserHome from './UserHome'
 import FilterPodcasts from './FilterPodcasts'
-
+import UserSettings from './UserSettings'
+import { Segment } from 'semantic-ui-react'
 
 
 class App extends React.Component {
@@ -18,7 +19,8 @@ class App extends React.Component {
     favorites: [],
     filteredFavs: [],
     filteredPods: [],
-    searchTerm: ''
+    searchTerm: '',
+    nightmode: false
   }
 
   componentDidMount() {
@@ -175,7 +177,48 @@ class App extends React.Component {
       if (this.state.filteredFavs.length > 0) {
         return <PodcastContainer podcastArray={this.state.podcastArray} editFavs={this.editFavs} user={this.state.user} favorites={this.state.filteredFavs} />
       }
-      return <PodcastContainer podcastArray={this.state.podcastArray} editFavs={this.editFavs} user={this.state.user} favorites={this.state.favorites.filter(fav => fav.user.id === this.state.user.id)} />
+        return <PodcastContainer podcastArray={this.state.podcastArray} editFavs={this.editFavs} user={this.state.user} favorites={this.state.favorites.filter(fav => fav.user.id === this.state.user.id)} />
+    }
+  }
+
+  updateUsername = (newName) => {
+    fetch(`http://localhost:3000/users/${this.state.user.id}`, {
+        method: "PATCH",
+        headers: {
+            'content-type': 'application/json',
+            'accepts': 'application/json'
+        },
+        body: JSON.stringify({
+            username: newName
+        })
+    })
+    .then(r => r.json())
+    .then((newUser) => {
+      this.setState({
+        user: newUser
+      })
+
+      fetch("http://localhost:3000/users")
+      .then(r => r.json())
+      .then((allUsers) => {
+        this.setState({
+          usersArray: allUsers
+        })
+      })
+    })
+  }
+
+  changeNightmode = (changeValue) => {
+    this.setState({
+      nightmode: changeValue
+    })
+  }
+
+  renderUserSettingsPage = () => {
+    if (this.state.user.username) {
+      return <UserSettings user={this.state.user} updateUsername={this.updateUsername} nightmode={this.state.nightmode} changeNightmode={this.changeNightmode}/>
+    } else {
+      return null
     }
   }
 
@@ -185,11 +228,37 @@ class App extends React.Component {
     })
   }
 
+  createUser = (newUsername) => {
+    fetch("http://localhost:3000/users", {
+      method: "POST",
+      headers: {
+        'content-type': 'application/json',
+        'accepts': 'application/json'
+      },
+      body: JSON.stringify({
+        username: newUsername
+      })
+    })
+    .then(r => r.json())
+    .then((newUser) => {
+      this.setState({
+        user: newUser
+      })
+    })
+  }
+
+  renderCreateUser = () => {
+    return <UserSettings user={{}} createUser={this.createUser} />
+  }
+
   render() {
     console.log("i am rendering")
     let { userObj } = this.state.user
     return (<BrowserRouter>
+    {this.state.nightmode ?
+    <Segment inverted >
       <div>
+
         { this.state.user.username ?
 
           <div className="ui menu">
@@ -202,23 +271,38 @@ class App extends React.Component {
                 User
               </a>
             </Link>
+            
             <Link to="/browse">
               <a className="item">
                 Browse
               </a>
             </Link>
             <div className="right menu">
+              <Link to="/user/settings">
+                <a className="item">
+                  Settings
+                </a>
+              </Link>
               <Link to="/browse">
                 <a className="item" onClick={this.handleLogout} >
                   Logout
                 </a>
               </Link>
             </div>
-          </div> : <h2>Choose a user</h2> }
-          
-        <div>
-          <DropdownMenu usersArray={this.state.usersArray} placeholder="Select User" onChange={this.handleUserChange} value={userObj} />   
-        </div>
+          </div> : <div className="ui menu">
+            <div className="header item">
+              <div>
+                <DropdownMenu usersArray={this.state.usersArray} placeholder="Select User" onChange={this.handleUserChange} value={userObj} />
+              </div>
+            </div>
+            <div className="right menu">
+              <Link to="/signup">
+                <a className="item">
+                  Signup
+                </a>
+              </Link>
+            </div>
+          </div> }
         
         <Switch>
           <Route exact path="/browse" render={ () => {
@@ -228,10 +312,72 @@ class App extends React.Component {
               {this.renderBrowsingPage()}
             </div> }} />
           <Route exact path="/user" render={this.renderUserHomePage} />
+          <Route exact path="/user/settings" render={this.renderUserSettingsPage} />
+          <Route exact path="/signup" render={this.renderCreateUser} />
         </Switch> 
         
       </div>
+      </Segment> :      
+      <div>
+        { this.state.user.username ?
+          <div className="ui menu">
+          
+            <div className="header item">
+              Welcome, {this.state.user.username}
+            </div>
+            <Link to="/user">
+              <a className="item">
+                User
+              </a>
+            </Link>
+            
+            <Link to="/browse">
+              <a className="item">
+                Browse
+              </a>
+            </Link>
+            <div className="right menu">
+              <Link to="/user/settings">
+                <a className="item">
+                  Settings
+                </a>
+              </Link>
+              <Link to="/browse">
+                <a className="item" onClick={this.handleLogout} >
+                  Logout
+                </a>
+              </Link>
+            </div>
+          </div> : <div className="ui menu">
+            <div className="header item">
+              <div>
+                <DropdownMenu usersArray={this.state.usersArray} placeholder="Select User" onChange={this.handleUserChange} value={userObj} />
+              </div>
+            </div>
+            <div className="right menu">
+              <Link to="/signup">
+                <a className="item">
+                  Signup
+                </a>
+              </Link>
+            </div>
+          </div> }
+
+        <Switch>
+          <Route exact path="/browse" render={ () => {
+            return <div className="ui four column doubling stackable grid container">
+              <h3>Browse All Podcasts:</h3>
+              <FilterPodcasts placeholder="Select genre" podcastArray={this.state.podcastArray} onChange={this.handleGenreChange}/>
+              {this.renderBrowsingPage()}
+            </div> }} />
+          <Route exact path="/user" render={this.renderUserHomePage} />
+          <Route exact path="/user/settings" render={this.renderUserSettingsPage} />
+          <Route exact path="/signup" render={this.renderCreateUser} />
+        </Switch> 
+
+        </div>}
     </BrowserRouter>
+    
     );
   } 
 }

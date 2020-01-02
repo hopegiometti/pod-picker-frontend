@@ -6,8 +6,10 @@ export default class UserHome extends React.Component {
         if (this.props.userObject.username) {
             let podcastArray = this.props.favorites.map(favorite => favorite.podcast)
             return( <div>
-                <h3>Your Favorite Podcasts:</h3>
-                <PodcastContainer podcastArray={podcastArray} editFavs={this.props.editFavs} user={this.props.userObject} favorites={this.props.favorites} />
+                <div>
+                    <h3>Your Favorite Podcasts:</h3>
+                    <PodcastContainer podcastArray={podcastArray} editFavs={this.props.editFavs} user={this.props.userObject} favorites={this.props.favorites} />
+                </div>
             </div> )
         } else {
             return(
