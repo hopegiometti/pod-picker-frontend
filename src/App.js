@@ -157,27 +157,27 @@ class App extends React.Component {
   renderUserHomePage = () => {
       if (this.state.filteredFavs.length > 0 ) {
         if (this.state.filteredFavs[0].user.id === this.state.user.id) {
-          return <UserHome userObject={this.state.user} favorites={this.state.filteredFavs} editFavs={this.editFavs}/>
+          return <UserHome userObject={this.state.user} favorites={this.state.filteredFavs} editFavs={this.editFavs} nightmode={this.state.nightmode}/>
         } else {
-          return <UserHome userObject={this.state.user} favorites={this.state.favorites.filter(fav => fav.user.id === this.state.user.id)} editFavs={this.editFavs}/>
+          return <UserHome userObject={this.state.user} favorites={this.state.favorites.filter(fav => fav.user.id === this.state.user.id)} editFavs={this.editFavs} nightmode={this.state.nightmode}/>
         }
       } else {
-        return <UserHome userObject={this.state.user} favorites={this.state.favorites.filter(fav => fav.user.id === this.state.user.id)} editFavs={this.editFavs}/>
+        return <UserHome userObject={this.state.user} favorites={this.state.favorites.filter(fav => fav.user.id === this.state.user.id)} editFavs={this.editFavs} nightmode={this.state.nightmode}/>
     }
   }
 
   renderBrowsingPage = () => {
     if (this.state.filteredPods.length > 0) {
       if (this.state.filteredFavs.length > 0) {
-        return <PodcastContainer podcastArray={this.state.filteredPods} editFavs={this.editFavs} user={this.state.user} favorites={this.state.filteredFavs} />
+        return <PodcastContainer podcastArray={this.state.filteredPods} editFavs={this.editFavs} user={this.state.user} favorites={this.state.filteredFavs} nightmode={this.state.nightmode}/>
       } else {
-        return <PodcastContainer podcastArray={this.state.filteredPods} editFavs={this.editFavs} user={this.state.user} favorites={this.state.favorites.filter(fav => fav.user.id === this.state.user.id)} />
+        return <PodcastContainer podcastArray={this.state.filteredPods} editFavs={this.editFavs} user={this.state.user} favorites={this.state.favorites.filter(fav => fav.user.id === this.state.user.id)} nightmode={this.state.nightmode}/>
       }
     } else {
       if (this.state.filteredFavs.length > 0) {
-        return <PodcastContainer podcastArray={this.state.podcastArray} editFavs={this.editFavs} user={this.state.user} favorites={this.state.filteredFavs} />
+        return <PodcastContainer podcastArray={this.state.podcastArray} editFavs={this.editFavs} user={this.state.user} favorites={this.state.filteredFavs} nightmode={this.state.nightmode}/>
       }
-        return <PodcastContainer podcastArray={this.state.podcastArray} editFavs={this.editFavs} user={this.state.user} favorites={this.state.favorites.filter(fav => fav.user.id === this.state.user.id)} />
+        return <PodcastContainer podcastArray={this.state.podcastArray} editFavs={this.editFavs} user={this.state.user} favorites={this.state.favorites.filter(fav => fav.user.id === this.state.user.id)} nightmode={this.state.nightmode}/>
     }
   }
 
@@ -224,7 +224,8 @@ class App extends React.Component {
 
   handleLogout = () => {
     this.setState({
-      user: {}
+      user: {},
+      nightmode: false
     })
   }
 
@@ -261,7 +262,7 @@ class App extends React.Component {
 
         { this.state.user.username ?
 
-          <div className="ui menu">
+          <div className="ui inverted menu">
           
             <div className="header item">
               Welcome, {this.state.user.username}

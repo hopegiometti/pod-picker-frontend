@@ -27,7 +27,7 @@ export default class PodcastCard extends React.Component {
 
     render() {
       // console.log(this.props)
-        return (<div >
+        return(<div>
         <div className="ui link cards">
            <div className="card">
               <div className="ui slide reveal">
