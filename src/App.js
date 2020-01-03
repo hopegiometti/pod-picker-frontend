@@ -214,9 +214,26 @@ class App extends React.Component {
     })
   }
 
+  deleteUser = () => {
+    console.log(this.state.user.id)
+    fetch(`http://localhost:3000/users/${this.state.user.id}`, {
+      method: "DELETE"
+    })
+    .then(r => r.json())
+    .then((resp) => {
+      console.log(resp)
+      let filteredUserArr = this.state.usersArray.filter(user => user.id !== resp.data.id)
+      this.setState({
+        user: {},
+        usersArray:  filteredUserArr,
+        nightmode: false
+      })
+    })
+  }
+
   renderUserSettingsPage = () => {
     if (this.state.user.username) {
-      return <UserSettings user={this.state.user} updateUsername={this.updateUsername} nightmode={this.state.nightmode} changeNightmode={this.changeNightmode}/>
+      return <UserSettings user={this.state.user} updateUsername={this.updateUsername} nightmode={this.state.nightmode} changeNightmode={this.changeNightmode} deleteUser={this.deleteUser}/>
     } else {
       return null
     }

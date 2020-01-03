@@ -1,7 +1,5 @@
 import React from 'react'
 import { Form } from 'semantic-ui-react'
-import { Checkbox } from 'semantic-ui-react'
-import { Segment } from 'semantic-ui-react'
 
 class UserSettings extends React.Component {
     state={
@@ -63,6 +61,18 @@ class UserSettings extends React.Component {
               </Form>
               <br></br>
               {this.updatedNightmode()}
+              <br></br>
+              <div>
+                <div className="ui inverted height stretched segment">
+                  <button className="ui inverted right floated button" onClick={this.props.deleteUser}>
+                    Delete Account
+                  </button>
+                  <br/>
+                </div>
+              </div>
+                <div className="ui hieght stretched inverted segment">
+                    <p></p>
+                </div>
               </div>)
           } else {
                return (<div>
@@ -72,7 +82,7 @@ class UserSettings extends React.Component {
                   </Form.Group>
                   <Form.Button>Submit</Form.Button>
                   </Form>
-                  {this.updatedNightmode()}
+                  {/* {this.updatedNightmode()} */}
               </div>)
           }
 
@@ -89,6 +99,13 @@ class UserSettings extends React.Component {
             </Form>
             <div>
             {this.updatedNightmode()}
+            <br></br>
+              <div>
+                <button className="ui right floated button" onClick={this.props.deleteUser}>
+                Delete Account
+                </button>
+                <br/>
+              </div>
             </div>
             </div>)
         } else {
@@ -100,7 +117,7 @@ class UserSettings extends React.Component {
                 <Form.Button>Submit</Form.Button>
                 </Form>
                 <div>
-                {this.updatedNightmode()}
+                {/* {this.updatedNightmode()} */}
                 </div>
             </div>)
         }
