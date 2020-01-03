@@ -245,6 +245,13 @@ class App extends React.Component {
       this.setState({
         user: newUser
       })
+      fetch("http://localhost:3000/users")
+      .then(r => r.json())
+      .then((usersPlusNew) => {
+        this.setState({
+          usersArray: usersPlusNew
+        })
+      })
     })
   }
 
