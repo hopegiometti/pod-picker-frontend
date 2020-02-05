@@ -24,7 +24,8 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    fetch("http://localhost:3000/podcasts")
+    // fetch("http://localhost:3000/podcasts")
+    fetch("https://pod-picker.herokuapp.com/podcasts")
     .then(r => r.json())
     .then((podcasts) => {
       let abcPods = podcasts.sort((a, b) => a.title.localeCompare(b.title))
@@ -33,7 +34,8 @@ class App extends React.Component {
       })
     }) 
     
-    fetch("http://localhost:3000/users")
+    // fetch("http://localhost:3000/users")
+    fetch("https://pod-picker.herokuapp.com/users")
     .then(r => r.json())
     .then((users) => {
      this.setState({
@@ -41,7 +43,8 @@ class App extends React.Component {
      }) 
     })
 
-    fetch("http://localhost:3000/favorites")
+    // fetch("http://localhost:3000/favorites")
+    fetch("http://pod-picker.herokuapp.com/favorites")
     .then(r => r.json())
     .then((favs) => {
      this.setState({
@@ -58,7 +61,8 @@ class App extends React.Component {
       let justThePods = this.state.filteredFavs.map(fav => fav.podcast)
       console.log(podToEdit, justThePods, this.state.filteredFavs)
       if (justThePods.includes(podcast)) {
-        fetch(`http://localhost:3000/favorites/${podToEdit[0].id}`, {
+        // fetch(`http://localhost:3000/favorites/${podToEdit[0].id}`, {
+        fetch(`http://pod-picker.herokuapp.com/favorites/${podToEdit[0].id}`, {
           method: "DELETE"
         })
         .then(r => r.json())
@@ -71,7 +75,8 @@ class App extends React.Component {
           })
         })
       } else {
-        fetch("http://localhost:3000/favorites", {
+        // fetch("http://localhost:3000/favorites", {
+        fetch("http://pod-picker.herokuapp.com/favorites", {
           method: "POST",
           headers: {
             "content-type": 'application/json',
@@ -96,7 +101,8 @@ class App extends React.Component {
       let podToEdit = userFavPods.filter(fav => fav.podcast.id === podcast.id)
       let justThePods = userFavPods.map(fav => fav.podcast)
       if (justThePods.includes(podcast)) {
-        fetch(`http://localhost:3000/favorites/${podToEdit[0].id}`, {
+        // fetch(`http://localhost:3000/favorites/${podToEdit[0].id}`, {
+        fetch(`http://pod-picker.herokuapp.com/favorites/${podToEdit[0].id}`, {
           method: "DELETE"
         })
         .then(r => r.json())
@@ -109,7 +115,8 @@ class App extends React.Component {
           })
         })
       } else {
-        fetch("http://localhost:3000/favorites", {
+        // fetch("http://localhost:3000/favorites", {
+        fetch("http://pod-picker.herokuapp.com/favorites", {  
           method: "POST",
           headers: {
             "content-type": 'application/json',
@@ -182,7 +189,8 @@ class App extends React.Component {
   }
 
   updateUsername = (newName) => {
-    fetch(`http://localhost:3000/users/${this.state.user.id}`, {
+    // fetch(`http://localhost:3000/users/${this.state.user.id}`, {
+    fetch(`https://pod-picker.herokuapp.com/users/${this.state.user.id}`, {  
         method: "PATCH",
         headers: {
             'content-type': 'application/json',
@@ -198,7 +206,8 @@ class App extends React.Component {
         user: newUser
       })
 
-      fetch("http://localhost:3000/users")
+      // fetch("http://localhost:3000/users")
+      fetch("http://pod-picker.herokuapp.com/users")
       .then(r => r.json())
       .then((allUsers) => {
         this.setState({
@@ -216,7 +225,8 @@ class App extends React.Component {
 
   deleteUser = () => {
     console.log(this.state.user.id)
-    fetch(`http://localhost:3000/users/${this.state.user.id}`, {
+    // fetch(`http://localhost:3000/users/${this.state.user.id}`, {
+    fetch(`http://pod-picker.herokuapp.com/users/${this.state.user.id}`, {  
       method: "DELETE"
     })
     .then(r => r.json())
@@ -247,7 +257,8 @@ class App extends React.Component {
   }
 
   createUser = (newUsername) => {
-    fetch("http://localhost:3000/users", {
+    // fetch("http://localhost:3000/users", {
+    fetch("http://pod-picker.herokuapp.com/users", {
       method: "POST",
       headers: {
         'content-type': 'application/json',
@@ -262,7 +273,8 @@ class App extends React.Component {
       this.setState({
         user: newUser
       })
-      fetch("http://localhost:3000/users")
+      // fetch("http://localhost:3000/users")
+      fetch("http://pod-picker.herokuapp.com/users")
       .then(r => r.json())
       .then((usersPlusNew) => {
         this.setState({
