@@ -56,13 +56,14 @@ class App extends React.Component {
   }
 
   editFavs = (podcast) => {
+    console.log("hi from edit favs")
     if (this.state.filteredFavs.length > 0 && this.state.filteredFavs[0].user.id === this.state.user.id) {
       let podToEdit = this.state.filteredFavs.filter(fav => fav.podcast.id === podcast.id)
       let justThePods = this.state.filteredFavs.map(fav => fav.podcast)
       console.log(podToEdit, justThePods, this.state.filteredFavs)
       if (justThePods.includes(podcast)) {
         // fetch(`http://localhost:3000/favorites/${podToEdit[0].id}`, {
-        fetch(`http://pod-picker.herokuapp.com/favorites/${podToEdit[0].id}`, {
+        fetch(`https://pod-picker.herokuapp.com/favorites/${podToEdit[0].id}`, {
           method: "DELETE"
         })
         .then(r => r.json())
@@ -76,7 +77,7 @@ class App extends React.Component {
         })
       } else {
         // fetch("http://localhost:3000/favorites", {
-        fetch("http://pod-picker.herokuapp.com/favorites", {
+        fetch("https://pod-picker.herokuapp.com/favorites", {
           method: "POST",
           headers: {
             "content-type": 'application/json',
