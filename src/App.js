@@ -1,6 +1,7 @@
 import React from 'react';
 import './App.css';
 import PodcastContainer from './PodcastContainer'
+import Recommend from './Recommend'
 import { Route, Switch, Link } from 'react-router-dom'
 import DropdownMenu from './DropdownMenu'
 import { BrowserRouter } from 'react-router-dom'
@@ -242,6 +243,10 @@ class App extends React.Component {
     })
   }
 
+  renderRecommendPage = () => {
+    return <Recommend allPods={this.state.podcastArray} userFavs={this.state.favorites} user={this.state.user}/>
+  }
+
   renderUserSettingsPage = () => {
     if (this.state.user.username) {
       return <UserSettings user={this.state.user} updateUsername={this.updateUsername} nightmode={this.state.nightmode} changeNightmode={this.changeNightmode} deleteUser={this.deleteUser}/>
@@ -374,6 +379,11 @@ class App extends React.Component {
                 Browse
               </a>
             </Link>
+            <Link to="/Recommend">
+              <a className="item">
+                Recommend
+              </a>
+            </Link>
             <div className="right menu">
               <Link to="/user/settings">
                 <a className="item">
@@ -408,6 +418,7 @@ class App extends React.Component {
               <FilterPodcasts placeholder="Select genre" podcastArray={this.state.podcastArray} onChange={this.handleGenreChange}/>
               {this.renderBrowsingPage()}
             </div> }} />
+          <Route exact  path="/Recommend" render={this.renderRecommendPage} />
           <Route exact path="/user" render={this.renderUserHomePage} />
           <Route exact path="/user/settings" render={this.renderUserSettingsPage} />
           <Route exact path="/signup" render={this.renderCreateUser} />
