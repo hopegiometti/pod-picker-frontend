@@ -50,6 +50,7 @@ export default class Recommend extends React.Component {
         let mostTimesFaved = 0
         let mostCommonGenre = ""
         let sameGenrePods = []
+        // let filteredForLikedPods = []
 
         for (let genre in genreMap) {
             if (genreMap[genre] > mostTimesFaved) {
@@ -59,7 +60,16 @@ export default class Recommend extends React.Component {
         }
 
         // console.log(this.props.allPods)
-        for (let pod of this.props.allPods) {
+        // let filteredForLikedPods = this.props.allPods.filter(pod => this.props.userFavs.includes(pod))
+        // console.log(this.props.userFavs)
+        let userFavPodIds = this.props.userFavs.map(fav => fav.podcast.id)
+        // console.log(this.props.allPods.map(pod => pod.id))
+        let allPodIds = this.props.allPods.map(pod => pod.id)
+
+        let filteredPodIds = allPodIds.filter(id => !userFavPodIds.includes(id) )
+        let filteredPods = this.props.allPods.filter(pod => filteredPodIds.includes(pod.id))
+        // console.log("filtered", filteredPods, "all", this.props.allPods)
+        for (let pod of filteredPods) {
             // console.log(pod)
             if (pod.genre === mostCommonGenre) {
                 sameGenrePods.push(pod)
