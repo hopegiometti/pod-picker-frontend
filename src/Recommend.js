@@ -95,8 +95,14 @@ export default class Recommend extends React.Component {
         return(<div>
             {/* {this.makeGenreMap()} */}
             {/* {this.recommendPod()} */}
-            <button onClick={() => this.recommendPod()}>Find me a new Podcast!</button>
-            {this.state.recPod ? <PodcastCard podcast={this.state.recPod} user={this.props.user} favorites={this.props.userFavs}/> : null}
+            <div>
+                <div class="ui center aligned container" id="center-div-vert">
+                    <div>
+                    <button class="huge ui button active" onClick={() => this.recommendPod()}>Find me a new Podcast!</button>
+                    {this.state.recPod ? <div class="ui centered card"><PodcastCard editFavs={this.props.editFavs} podcast={this.state.recPod} user={this.props.user} favorites={this.props.userFavs}/></div> : null}
+                    </div>
+                </div>
+            </div>
         </div>)
     }
 }

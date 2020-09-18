@@ -244,7 +244,7 @@ class App extends React.Component {
   }
 
   renderRecommendPage = () => {
-    return <Recommend allPods={this.state.podcastArray} userFavs={this.state.favorites} user={this.state.user}/>
+    return <Recommend editFavs={this.editFavs} allPods={this.state.podcastArray} userFavs={this.state.favorites} user={this.state.user}/>
   }
 
   renderUserSettingsPage = () => {
